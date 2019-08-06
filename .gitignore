@@ -10,8 +10,8 @@ CTestTestfile.cmake
 
 .vs
 .vscode
-build
-out
+/build
+/out
 **/*.o
 **/*.a
 **/*.lib
