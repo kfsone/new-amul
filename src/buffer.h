@@ -1,23 +1,28 @@
-#ifndef AMUL_SRC_BUFFER_H
-#define AMUL_SRC_BUFFER_H
+#ifndef THE_SRC_BUFFER_H
+#define THE_SRC_BUFFER_H
 
-// Buffer is for consuming bytes from a fixed range in memory.
+#include <cstddef>
+#include <cstdint>
 
-#include <h/amul.type.h>
-
+// Buffer is for consuming bytes across an area of memory, tracking the start location
+// the current position, and the end.
+//
 struct Buffer {
+	using iterator = const char *;
+	using const_iterator = const char *;
+	
     const char *m_start{nullptr};
     const char *m_cur{nullptr};
     const char *m_end{nullptr};
 
     constexpr Buffer() noexcept {}
-    constexpr Buffer(const char *start, const char *end) noexcept
+    constexpr Buffer(iterator start, iterator end) noexcept
         : m_start{start}
         , m_cur{start}
         , m_end{end}
     {
     }
-    constexpr Buffer(const char *start, size_t len) noexcept
+    constexpr Buffer(iterator start, size_t len) noexcept
         : Buffer{start, start + len}
     {
     }
@@ -27,16 +32,18 @@ struct Buffer {
     {
     }
 
-    void Assign(const char *start, size_t length) noexcept
+    void Assign(iterator start, size_t length) noexcept
     {
         m_start = start;
         m_cur = start;
         m_end = m_start + length;
     }
 
-    constexpr const char *begin() const noexcept { return m_start; }
-    constexpr const char *end() const noexcept { return m_end; }
-    constexpr const char *it() const noexcept { return m_cur; }
+    constexpr iterator begin() const noexcept { return m_start; }
+    constexpr iterator end() const noexcept { return m_end; }
+    constexpr const_iterator cbegin() const noexcept { return m_start; }
+    constexpr const_iterator cend() const noexcept { return m_end; }
+    constexpr const_iterator it() const noexcept { return m_cur; }
 
     constexpr bool   Eof() const noexcept { return it() >= end(); }
     constexpr size_t Size() const noexcept { return end() - begin(); }
@@ -48,4 +55,4 @@ struct Buffer {
     void Close() noexcept { Assign(nullptr, 0); }
 };
 
-#endif  // AMUL_SRC_BUFFER_H
+#endif  // THE_SRC_BUFFER_H

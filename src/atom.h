@@ -1,9 +1,36 @@
-#ifndef AMUL_SRC_ATOM_H
-#define AMUL_SRC_ATOM_H
+#ifndef THE_SRC_ATOM_H
+#define THE_SRC_ATOM_H
 
-#include "atomtype.h"
+// "atom"s are the preliminary unit of classification used by the parser to identify
+// contiguous sequences of characters (whitespace, digits, letters), and symbols.
+
 #include <cstddef>
+#include <cstdint>
 
+enum AtomType {
+    A_INVALID,
+    A_END,     // \r or \n or \n\r or \r\n
+    A_SPACE,   // ' '
+    A_LETTER,  // a-z A-Z
+    A_DIGIT,   // 0-9
+    A_PUNCT,   // punctuation
+};
+
+
+///TODO: Introduce
+struct SourceLocation final {
+	const char *m_sourceFilename;
+	uint32_t	m_lineNo;
+	uint32_t	m_lineOffset;		// 1-based position on line for non-end atoms
+									// note: A_END at position 0 => empty line
+};
+
+
+// Atom is very simply a view on a text buffer that identifies one or more characters
+// of being a given type. The parser can then use sequences of atoms to match lexemes.
+//
+// TODO: Atom should track file, line and offset.
+//
 struct Atom final {
     const char *m_start;
     AtomType    m_type;
@@ -45,4 +72,4 @@ struct Atom final {
 
 AtomType NextAtomType(struct Buffer &);
 
-#endif  // AMUL_SRC_ATOM_H
+#endif  // THE_SRC_ATOM_H
